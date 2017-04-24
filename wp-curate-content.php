@@ -148,10 +148,22 @@ function ajax_preview_content(){
             $description = $meta->getAttribute('content');
         if($meta->getAttribute('name') == 'keywords')
             $keywords = $meta->getAttribute('content');
-    }
+        if($meta->getAttribute('property') == 'og:url')
+            $url = $meta->getAttribute('content');
+        if($meta->getAttribute('property') == 'og:image')
+            $image = $meta->getAttribute('content');
+    }    
+    
+    $title = utf8_decode($title);
+    $description = utf8_decode($description);
+    $keywords = utf8_decode($keywords);
 
     echo "Title: $title". '<br/><br/>';
     echo "Description: $description". '<br/><br/>';
-    echo "Keywords: $keywords";
+    echo "Keywords: $keywords". '<br/><br/>';
+    echo "Url: $url". '<br/><br/>';
+    echo "image: $image". '<br/><br/>';
+
+    die();
 }
 ?>
