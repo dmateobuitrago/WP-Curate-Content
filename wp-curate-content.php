@@ -15,4 +15,15 @@ if( ! defined ('ABSPATH')){
     exit();
 }
 
+//REGISTER POST TYPE TO SAVE CONTENT
+function wpcc_register_content_post_type(){
+    $args = array(
+        'public' => true,
+        'label'  => 'Content'
+    );
+
+    register_post_type( 'content', $args );
+}
+
+add_action( 'init', 'wpcc_register_content_post_type');
 ?>
