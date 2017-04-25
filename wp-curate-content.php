@@ -103,7 +103,7 @@ function submit_content_page_template( $template ) {
 
     return $template;
 }
-
+//Preview content from other website
 // REGISTER AJAX
 //Enqueue Ajax Scripts
 function enqueue_ajax_preview_content() {
@@ -190,5 +190,26 @@ function ajax_preview_content(){
     
     <?php
     die();
+}
+
+//Save content
+// REGISTER AJAX
+//Enqueue Ajax Scripts
+function enqueue_ajax_save_content() {
+  wp_register_script( 'save-content-ajax', plugins_url('wp-curate-content/js/save-content-ajax.js'), array( 'jquery' ), '', true );
+  wp_localize_script( 'save-content-ajax', 'ajax_product_params', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+  wp_enqueue_script( 'save-content-ajax' );
+}
+add_action('wp_enqueue_scripts', 'enqueue_ajax_save_content');
+
+//Add Ajax Actions
+add_action('wp_ajax_ajax_save_content', 'ajax_save_content');
+add_action('wp_ajax_nopriv_ajax_save_content', 'ajax_save_content');
+
+
+function ajax_save_content(){ 
+    http://www.wpexplorer.com/create-wordpress-posts-pages-using-php/
+    https://tommcfarlin.com/programmatically-create-a-post-in-wordpress/
+    https://wordpress.stackexchange.com/questions/8569/wp-insert-post-php-function-and-custom-fields
 }
 ?>
