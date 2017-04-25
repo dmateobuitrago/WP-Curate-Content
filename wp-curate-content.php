@@ -15,6 +15,13 @@ if( ! defined ('ABSPATH')){
     exit();
 }
 
+// Add styles and scripts
+
+add_action( 'wp_enqueue_scripts', 'enqueue_my_styles' );
+function enqueue_my_styles() {
+    wp_enqueue_style('curated-content-styles', plugin_dir_url( __FILE__ ) . 'css/cc-styles.css' );
+}
+
 //REGISTER POST TYPE TO SAVE CONTENT
 function wpcc_register_content_post_type(){
     $singular = 'Contenido Curado';
@@ -157,13 +164,31 @@ function ajax_preview_content(){
     $title = utf8_decode($title);
     $description = utf8_decode($description);
     $keywords = utf8_decode($keywords);
-
-    echo "Title: $title". '<br/><br/>';
-    echo "Description: $description". '<br/><br/>';
-    echo "Keywords: $keywords". '<br/><br/>';
-    echo "Url: $url". '<br/><br/>';
-    echo "image: $image". '<br/><br/>';
-
+    ?>
+        <div class="curated-content-preview">
+            <form action="" id="new_curated_content">
+                <?php if( strlen($image) > 0 ): ?>
+                    <input type="hidden" name="content_image_url" id="content_image_url" value="<?php echo  $image ?>">
+                    <div class="image_preview" style="background: url(<?php echo  $image ?>); background-size: cover;"></div>
+                <?php endif; ?>
+                <div class="field_container">
+                    <label for="content_title">Título</label>
+                    <input type="text" name="content_title" id="content_title" value="<?php echo  $title ?>">
+                </div>
+                <div class="field_container">
+                    <label for="content_description">Descripción</label>
+                    <textarea name="content_description" id="content_description" ><?php echo  $description ?></textarea>
+                </div>
+                <div class="field_container">
+                    <label for="content_keywords">Palabras Clave</label>
+                    <input type="text" name="content_keywords" id="content_keywords" value="<?php echo  $keywords ?>">
+                </div>
+                <input type="hidden" name="content_url" id="content_url" value="<?php echo  $url ?>">
+                <input type="submit" id="submit_curated_content" value="Guardar nuevo contenido">
+            </form>
+        </div>    
+    
+    <?php
     die();
 }
 ?>
