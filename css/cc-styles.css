@@ -1,4 +1,5 @@
-label {
+.preview_curated_content_url label,
+#new_curated_content label {
     display: block;
     font-weight: 900;
 }
@@ -9,7 +10,8 @@ label {
     margin: 0px auto;
 }
 
-input[type=text]{
+#new_curated_content input[type=text],
+.preview_curated_content_url  input[type=text]{
     width: 100%;
     height: 36px !important;
     background: none;

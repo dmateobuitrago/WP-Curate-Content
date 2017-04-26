@@ -1,13 +1,21 @@
 jQuery(function($){
-    function preview_content() {
+    function save_new_content() {
         var ajax_url = ajax_product_params.ajax_url; //Get ajax url (added through wp_localize_script)
         var contentUrl = $('#content-url-input').val();
+        var contentTitle = $('#content_title').val();
+        var contentDescription = $('#content_description').val();
+        var contentTags = $('#content_keywords').val();
+        var contentImgUrl = $('#content_image_url').val();
         $.ajax({
             type: 'GET',
             url: ajax_url,
             data: {
-                action: 'ajax_preview_content',
-                content_url: contentUrl
+                action: 'ajax_save_content',
+                content_url: contentUrl,
+                content_title: contentTitle,
+                content_excerpt: contentDescription,
+                content_tags: contentTags,
+                content_image_url: contentImgUrl
             },
             beforeSend: function ()
             {
@@ -29,19 +37,8 @@ jQuery(function($){
             }
         });
     }
-
-    $('#preview_curated_content_url').on('submit', function(e){
+    $(document).on('submit','#new_curated_content', function(e){
         e.preventDefault();
-        preview_content();
-    });
-
-
-    function post_new_content(){
-
-    }
-
-    $('#new_curated_content').on('submit', function(e){
-        e.preventDefault();
-        post_new_content()
+        save_new_content();
     });
 });

@@ -76,7 +76,9 @@ function wpcc_register_content_post_type(){
             'title', 
             'editor', 
             'author', 
-            'custom-fields' 
+            'custom-fields',
+            'thumbnail',
+            'tags'
         )
     );
 
@@ -103,6 +105,32 @@ function submit_content_page_template( $template ) {
 
     return $template;
 }
+
+
+//FUNCTION TO CREATE FEATURED IMAGE 
+function Generate_Featured_Image( $image_url, $post_id  ){
+    $upload_dir = wp_upload_dir();
+    $image_data = file_get_contents($image_url);
+    $filename = basename($image_url);
+    if(wp_mkdir_p($upload_dir['path']))     $file = $upload_dir['path'] . '/' . $filename;
+    else                                    $file = $upload_dir['basedir'] . '/' . $filename;
+    file_put_contents($file, $image_data);
+
+    $wp_filetype = wp_check_filetype($filename, null );
+    $attachment = array(
+        'post_mime_type' => $wp_filetype['type'],
+        'post_title' => sanitize_file_name($filename),
+        'post_content' => '',
+        'post_status' => 'inherit'
+    );
+    $attach_id = wp_insert_attachment( $attachment, $file, $post_id );
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
+    $res1= wp_update_attachment_metadata( $attach_id, $attach_data );
+    $res2= set_post_thumbnail( $post_id, $attach_id );
+}
+
+
 //Preview content from other website
 // REGISTER AJAX
 //Enqueue Ajax Scripts
@@ -206,10 +234,57 @@ add_action('wp_enqueue_scripts', 'enqueue_ajax_save_content');
 add_action('wp_ajax_ajax_save_content', 'ajax_save_content');
 add_action('wp_ajax_nopriv_ajax_save_content', 'ajax_save_content');
 
+function slugify($str) {
+    $search = array('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+    $replace = array('s', 't', 's', 't', 's', 't', 's', 't', 'i', 'a', 'a', 'i', 'a', 'a', 'e', 'E');
+    $str = str_ireplace($search, $replace, strtolower(trim($str)));
+    $str = preg_replace('/[^\w\d\-\ ]/', '', $str);
+    $str = str_replace(' ', '-', $str);
+    return preg_replace('/\-{2,}', '-', $str);
+}
+
+function get_img_ext($url){
+    $filename_from_url = parse_url($url);
+    $ext = pathinfo($filename_from_url['path'], PATHINFO_EXTENSION);
+    return $ext;
+}
+
 
 function ajax_save_content(){ 
-    http://www.wpexplorer.com/create-wordpress-posts-pages-using-php/
-    https://tommcfarlin.com/programmatically-create-a-post-in-wordpress/
-    https://wordpress.stackexchange.com/questions/8569/wp-insert-post-php-function-and-custom-fields
+    $query_data = $_GET;
+	$content_url = $query_data['content_url'];
+	$content_title = $query_data['content_title'];
+	$content_slug = slugify($content_title);
+	$content_excerpt = $query_data['content_excerpt'];
+	$content_tags = $query_data['content_tags'];
+	$content_image_url = $query_data['content_image_url'];
+    $image_url_name = basename($content_image_url);
+    $upload_dir = '/wp-content/uploads/' - $image_url_name;
+    
+    $ch = curl_init($content_image_url);
+    $fp = fopen($upload_dir, 'wb');
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_exec($ch);
+    curl_close($ch);
+    fclose($fp);
+
+    $post_information = array(
+        'post_title' => $content_title,
+        'post_content' => $content_excerpt,
+        'post_excerpt' => $content_excerpt,
+        'post_type' => 'content',
+        'post_status' => 'publish'
+    );
+ 
+    $post_id = wp_insert_post( $post_information );
+    wp_set_post_tags( $post_id, $content_tags );
+    // Generate_Featured_Image($content_image_url_server, $post_id);
+
+    echo '<pre>';
+    print_r(file_get_contents($content_image_url));
+    echo '</pre>';
 }
+
+
 ?>
