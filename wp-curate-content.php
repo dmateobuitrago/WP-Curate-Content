@@ -210,27 +210,11 @@ add_action('wp_enqueue_scripts', 'enqueue_ajax_save_content');
 add_action('wp_ajax_ajax_save_content', 'ajax_save_content');
 add_action('wp_ajax_nopriv_ajax_save_content', 'ajax_save_content');
 
-function slugify($str) {
-    $search = array('', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
-    $replace = array('s', 't', 's', 't', 's', 't', 's', 't', 'i', 'a', 'a', 'i', 'a', 'a', 'e', 'E');
-    $str = str_ireplace($search, $replace, strtolower(trim($str)));
-    $str = preg_replace('/[^\w\d\-\ ]/', '', $str);
-    $str = str_replace(' ', '-', $str);
-    return preg_replace('/\-{2,}', '-', $str);
-}
-
-function get_img_ext($url){
-    $filename_from_url = parse_url($url);
-    $ext = pathinfo($filename_from_url['path'], PATHINFO_EXTENSION);
-    return $ext;
-}
-
 
 function ajax_save_content(){ 
     $query_data = $_GET;
 	$content_url = $query_data['content_url'];
 	$content_title = $query_data['content_title'];
-	$content_slug = slugify($content_title);
 	$content_excerpt = $query_data['content_excerpt'];
 	$content_tags = $query_data['content_tags'];
 	$content_image_url = $query_data['content_image_url'];
