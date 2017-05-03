@@ -165,9 +165,9 @@ function ajax_preview_content(){
             $image = $meta->getAttribute('content');
     }    
     
-    $title = utf8_decode($title);
-    $description = utf8_decode($description);
-    $keywords = utf8_decode($keywords);
+    // $title = utf8_decode($title);
+    // $description = utf8_decode($description);
+    // $keywords = utf8_decode($keywords);
     ?>
         <div class="curated-content-preview">
             <form action="" id="new_curated_content">
