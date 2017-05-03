@@ -65,6 +65,7 @@ function wpcc_register_content_post_type(){
         'query_var'           => true,
         'capability_type'     => 'post',
         'map_meta_cap'        => true,
+        'taxonomies' => array('post_tag'),
         // 'capabilities' => array(),
         'rewrite'             => array( 
             'slug' => $slug,
@@ -77,8 +78,7 @@ function wpcc_register_content_post_type(){
             'editor', 
             'author', 
             'custom-fields',
-            'thumbnail',
-            'tags'
+            'thumbnail'
         )
     );
 
@@ -104,30 +104,6 @@ function submit_content_page_template( $template ) {
     }
 
     return $template;
-}
-
-
-//FUNCTION TO CREATE FEATURED IMAGE 
-function Generate_Featured_Image( $image_url, $post_id  ){
-    $upload_dir = wp_upload_dir();
-    $image_data = file_get_contents($image_url);
-    $filename = basename($image_url);
-    if(wp_mkdir_p($upload_dir['path']))     $file = $upload_dir['path'] . '/' . $filename;
-    else                                    $file = $upload_dir['basedir'] . '/' . $filename;
-    file_put_contents($file, $image_data);
-
-    $wp_filetype = wp_check_filetype($filename, null );
-    $attachment = array(
-        'post_mime_type' => $wp_filetype['type'],
-        'post_title' => sanitize_file_name($filename),
-        'post_content' => '',
-        'post_status' => 'inherit'
-    );
-    $attach_id = wp_insert_attachment( $attachment, $file, $post_id );
-    require_once(ABSPATH . 'wp-admin/includes/image.php');
-    $attach_data = wp_generate_attachment_metadata( $attach_id, $file );
-    $res1= wp_update_attachment_metadata( $attach_id, $attach_data );
-    $res2= set_post_thumbnail( $post_id, $attach_id );
 }
 
 
@@ -258,16 +234,6 @@ function ajax_save_content(){
 	$content_excerpt = $query_data['content_excerpt'];
 	$content_tags = $query_data['content_tags'];
 	$content_image_url = $query_data['content_image_url'];
-    $image_url_name = basename($content_image_url);
-    $upload_dir = '/wp-content/uploads/' - $image_url_name;
-    
-    $ch = curl_init($content_image_url);
-    $fp = fopen($upload_dir, 'wb');
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_exec($ch);
-    curl_close($ch);
-    fclose($fp);
 
     $post_information = array(
         'post_title' => $content_title,
@@ -279,12 +245,28 @@ function ajax_save_content(){
  
     $post_id = wp_insert_post( $post_information );
     wp_set_post_tags( $post_id, $content_tags );
-    // Generate_Featured_Image($content_image_url_server, $post_id);
 
-    echo '<pre>';
-    print_r(file_get_contents($content_image_url));
-    echo '</pre>';
+    function new_attachment( $att_id ){
+        // the post this was sideloaded into is the attachments parent!
+
+        // fetch the attachment post
+        $att = get_post( $att_id );
+
+        // grab it's parent
+        $post_id = $att->post_parent;
+
+        // set the featured post
+        set_post_thumbnail( $post_id, $att_id );
+    }
+
+    // add the function above to catch the attachments creation
+    add_action('add_attachment','new_attachment');
+
+    // load the attachment from the URL
+    media_sideload_image($content_image_url, $post_id, $content_title);
+
+    // we have the image now, and the function above will have fired too setting the thumbnail ID in the process, so lets remove the hook so we don't cause any more trouble 
+    remove_action('add_attachment','new_attachment');
+    die();
 }
-
-
 ?>
