@@ -251,6 +251,12 @@ function ajax_save_content(){
 
     // we have the image now, and the function above will have fired too setting the thumbnail ID in the process, so lets remove the hook so we don't cause any more trouble 
     remove_action('add_attachment','new_attachment');
+
+    ?>
+    <div class="bbp-template-notice">
+        <p>¡Tu contenido fue guardado con éxito! </p>
+    </div>
+    <?php
     die();
 }
 ?>

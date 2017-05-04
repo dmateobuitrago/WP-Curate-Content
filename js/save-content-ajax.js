@@ -19,15 +19,15 @@ jQuery(function($){
             },
             beforeSend: function ()
             {
-                //You could show a loader here
-                // $('#loader').show();
+                // You could show a loader here
+                $('#loader').show();
             },
             success: function(data)
             {
                 // Hide loader here
-                // setTimeout(function() {
-                //     $('#loader').hide();
-                // }, 500);
+                setTimeout(function() {
+                    $('#loader').hide();
+                }, 500);
                 $('#show-content').html(data);
             },
             error: function()
