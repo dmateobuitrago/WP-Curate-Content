@@ -6,6 +6,7 @@ jQuery(function($){
         var contentDescription = $('#content_description').val();
         var contentTags = $('#content_keywords').val();
         var contentImgUrl = $('#content_image_url').val();
+        var parentComunidad = $('#parent_comunidad').val();
         $.ajax({
             type: 'GET',
             url: ajax_url,
@@ -15,7 +16,8 @@ jQuery(function($){
                 content_title: contentTitle,
                 content_excerpt: contentDescription,
                 content_tags: contentTags,
-                content_image_url: contentImgUrl
+                content_image_url: contentImgUrl,
+                parent_comunidad: parentComunidad
             },
             beforeSend: function ()
             {

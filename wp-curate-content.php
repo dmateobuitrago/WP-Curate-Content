@@ -218,6 +218,7 @@ function ajax_save_content(){
 	$content_excerpt = $query_data['content_excerpt'];
 	$content_tags = $query_data['content_tags'];
 	$content_image_url = $query_data['content_image_url'];
+	$parent_comunidad = $query_data['parent_comunidad'];
 
     $post_information = array(
         'post_title' => $content_title,
@@ -229,7 +230,8 @@ function ajax_save_content(){
  
     $post_id = wp_insert_post( $post_information );
     wp_set_post_tags( $post_id, $content_tags );
-
+    add_post_meta($post_id, 'parent_comunidad', $parent_comunidad);
+    add_post_meta($post_id, 'content_url', $content_url);
     function new_attachment( $att_id ){
         // the post this was sideloaded into is the attachments parent!
 

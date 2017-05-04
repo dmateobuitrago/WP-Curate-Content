@@ -6,6 +6,15 @@ Template Name: Content submission
 
 $user_id = get_current_user_id();
 ?>
+<div id="loader">
+    <div id="loader-spinner">
+    </div>
+</div>
+<?php if(isset($_GET['comunidad_id'])): ?>
+    <form action="">
+        <input type="hidden" name="parent_comunidad" id="parent_comunidad" value="<?php echo $_GET['comunidad_id']; ?>">
+    </form>
+<?php endif; ?>
 <div class="gp-container">
     <?php if ( is_user_logged_in() ): ?>
         <form action="" class="preview_curated_content_url" id="preview_curated_content_url">

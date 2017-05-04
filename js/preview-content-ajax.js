@@ -13,7 +13,6 @@ jQuery(function($){
             {
                 //You could show a loader here
                 $('#loader').show();
-                console.log("before preview");
             },
             success: function(data)
             {
