@@ -31,6 +31,9 @@ jQuery(function($){
                     $('#loader').hide();
                 }, 500);
                 $('#show-content').html(data);
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
             },
             error: function()
             {
